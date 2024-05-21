@@ -13,6 +13,8 @@ exports.addProduct = async (req, res) => {
       });
     }
 
+    const newImage = image.replace("images", "");
+
     const newProduct = await prisma.product.create({
       data: {
         name,
@@ -20,7 +22,7 @@ exports.addProduct = async (req, res) => {
         price: parseFloat(price),
         category_id,
         stock: parseInt(stock),
-        image,
+        image: newImage,
       },
     });
 
@@ -48,12 +50,12 @@ exports.deleteProduct = async (req, res) => {
       });
     }
 
-    const imageProduct = product.image;
+    const imageProduct = `images${product.image}`;
 
     fs.unlink(imageProduct, (err) => {
       if (err) {
         res.status(400);
-        throw new Error("Image not found");
+        throw new Error(err);
       }
     });
 
@@ -156,6 +158,8 @@ exports.updateProduct = async (req, res) => {
     const { id } = req.params;
     const image = req.file.path;
 
+    const newImage = image.replace("images", "");
+
     const product = await prisma.product.findUnique({
       where: { id },
     });
@@ -166,8 +170,10 @@ exports.updateProduct = async (req, res) => {
       });
     }
 
+    const imageToDelete = `images${product.image}`;
+
     if (product.image) {
-      fs.unlink(product.image, (err) => {
+      fs.unlink(imageToDelete, (err) => {
         if (err) {
           return res.status(422).json({
             error: "Please input image",
@@ -184,7 +190,7 @@ exports.updateProduct = async (req, res) => {
         price: parseFloat(price) || product.price,
         category_id: category_id || product.category_id,
         stock: parseInt(stock) || product.stock,
-        image: image || product.image,
+        image: newImage || product.image,
       },
     });
 

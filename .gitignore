@@ -1,1 +1,8 @@
 node_modules
+# Ignore all files in images/products
+images/products/*
+images/avatars/*
+
+# Exclude .gitkeep to keep the folder in the repo
+!images/products/.gitkeep
+!images/avatars/.gitkeep

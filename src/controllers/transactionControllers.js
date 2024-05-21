@@ -43,8 +43,6 @@ exports.createTransaction = async (req, res) => {
 
                   totalHarga += productInfo.price * product.quantity;
 
-                  console.log(totalHarga);
-
                   return {
                     product_id: product.product_id,
                     quantity: product.quantity,
@@ -136,9 +134,15 @@ exports.getAllTransactions = async (req, res) => {
 
 exports.getTransactionByUser = async (req, res) => {
   try {
-    const transactionHistory = await prisma.user.findMany({
+    const transactionHistory = await prisma.user.findUnique({
+      where: {
+        id: req.user.id,
+      },
       select: {
         transactions: {
+          orderBy: {
+            transaction_date: "desc",
+          },
           select: {
             id: true,
             transaction_date: true,

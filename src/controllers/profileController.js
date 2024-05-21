@@ -106,8 +106,14 @@ exports.updateAvatar = async (req, res) => {
       });
     }
 
+    const avatarImage = avatar.replace("images", "");
+    console.log(avatarImage);
+
+    const avatarToDelete = `images${profile.profile.avatar}`;
+    console.log(avatarToDelete);
+
     if (profile.profile.avatar) {
-      fs.unlink(profile.profile.avatar, (err) => {
+      fs.unlink(avatarToDelete, (err) => {
         if (err) {
           return res.status(400).json({
             error: "File not found",
@@ -123,7 +129,7 @@ exports.updateAvatar = async (req, res) => {
       data: {
         profile: {
           update: {
-            avatar,
+            avatar: avatarImage || profile.profile.avatar,
           },
         },
       },
